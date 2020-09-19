@@ -1,22 +1,33 @@
-﻿// ServerUSock.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include<uwebsockets/App.h>
+using namespace std;
+
+// struct for storage user data
+struct UserConnection {
+    unsigned long user_id;
+    string* user_name;
+};
+
+    //"ws://127.0.0.1/" url
+    //ws веб сокет
+    //.open -lambda function
 
 int main()
 {
-    uWS::App();
+    unsigned long latest_user_id = 10;
+    uWS::App().ws<UserConnection>("/*",{
+        .open = [&](auto* ws) {     //[&]- all variables
+            //what to do when user connecting
+            UserConnection* data=(UserConnection* )ws->getUserData();
+            data->user_id = latest_user_id++;
+        },
+        .message = [](auto* ws, string_view message, uWS::OpCode opCode) {
+            // what to  do when receive message
+
+        }
+});
    
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
 // Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
